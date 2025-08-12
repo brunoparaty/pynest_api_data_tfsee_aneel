@@ -1,0 +1,3 @@
+[submodule "Infraestructure/Sharepoint"]
+	path = Infraestructure/Sharepoint
+	url = https://github.com/ParatyEnergia/Sharepoint.git

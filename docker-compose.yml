@@ -1,0 +1,32 @@
+
+services:
+  # Serviço do Redis (nosso broker e backend)
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  # Serviço da API (o "Garçom")
+  api:
+    build: .  # Constrói a imagem a partir do Dockerfile na pasta atual
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 # Comando para iniciar a API
+    ports:
+      - "8000:8000" # Mapeia a porta 8000 do contêiner para a porta 8000 da sua máquina
+    volumes:
+      - ./src:/app/src # Monta o código local, para que alterações reflitam sem precisar reconstruir a imagem (ótimo para dev)
+      - ./Boletos_PDF_ANEEL:/app/Boletos_PDF_ANEEL # Monta a pasta de PDFs gerados na raiz do projeto
+    env_file:
+      - .env # Passa as variáveis do arquivo .env (ex: credenciais do SharePoint) para o contêiner
+    depends_on:
+      - redis # Garante que o Redis inicie antes da API
+
+  # Serviço do Worker (o "Chef")
+  worker:
+    build: . # Usa a MESMA imagem da API, o que é muito eficiente
+    command: celery -A src.config.celery_app worker --loglevel=info --pool=solo # Comando para iniciar o Worker
+    volumes:
+      - ./src:/app/src # Também monta o código local para desenvolvimento
+    env_file:
+      - .env # O Worker também pode precisar das credenciais
+    depends_on:
+      - redis # Garante que o Redis inicie antes do Worker

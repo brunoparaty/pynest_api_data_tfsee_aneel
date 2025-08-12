@@ -1,0 +1,43 @@
+# --- Ambientes Virtuais ---
+# Nunca versionar as pastas de ambiente virtual
+.venv/
+venv/
+env/
+.env/
+
+# --- Arquivos de Saída do Projeto ---
+# Ignorar as pastas onde os boletos e arquivos HTML são salvos
+Boletos_PDF_ANEEL/
+# Padrão mais genérico para cobrir futuras pastas de boletos
+Boletos_*/
+
+# --- Arquivos de Depuração ---
+# Ignorar screenshots e páginas HTML geradas durante erros
+erro_screenshot.png
+erro_screenshot_final.png
+erro_pagina.html
+debug_pagina_final.html
+
+# --- Cache e Arquivos Compilados do Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Configurações de Editores de Código e IDEs ---
+# Visual Studio Code
+.vscode/
+# PyCharm
+.idea/
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# --- Arquivos de Sistema Operacional ---
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+
+# Variáveis de Ambiente
+.env

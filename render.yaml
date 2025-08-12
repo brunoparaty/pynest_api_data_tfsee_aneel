@@ -1,0 +1,51 @@
+# Define os serviços que serão criados no Render
+services:
+  # 1. O Serviço de Redis (nossa fila e backend)
+  - type: redis
+    name: redis-broker
+    plan: free # Define o plano gratuito para o Redis
+
+  # 2. O Serviço da API (nosso servidor web)
+  - type: web 
+    name: aneel-api
+    runtime: docker # Especifica que será construído a partir do seu Dockerfile
+    plan: free # Define o plano gratuito para a API
+    healthCheckPath: /health # Usa nosso endpoint para saber se a API está saudável
+    envVars:
+      - key: PYTHON_VERSION # Boa prática para garantir a versão do Python
+        value: 3.10 
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: redis-broker
+          property: internalUrl # Pega a URL interna do nosso serviço Redis e a injeta na API
+      - fromGroup: aneel-secrets # Aponta para o grupo de segredos que criaremos no Passo 3
+
+  # 3. O Serviço do Worker (nosso robô Celery + Playwright)
+  - type: worker 
+    name: aneel-worker
+    runtime: docker
+    plan: free # O plano gratuito pode ser insuficiente para o Playwright (ver aviso)
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: redis-broker
+          property: internalUrl
+      - fromGroup: aneel-secrets
+
+# Define grupos de variáveis de ambiente secretas para não colocá-las no código
+envVarGroups:
+  - name: aneel-secrets
+    envVars:
+      - key: SHAREPOINT_CLIENT_ID
+        sync: false # sync: false evita que o valor seja exposto desnecessariamente
+      - key: SHAREPOINT_CLIENT_SECRET
+        sync: false
+      - key: SHAREPOINT_TENANT_ID
+        sync: false
+      - key: SHAREPOINT_SITE_URL
+        sync: false
+      # Adicione aqui outras variáveis do seu .env
