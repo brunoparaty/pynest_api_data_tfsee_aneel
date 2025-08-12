@@ -40,12 +40,12 @@ services:
 envVarGroups:
   - name: aneel-secrets
     envVars:
-      - key: SHAREPOINT_CLIENT_ID
+      - key: TENANT_ID
         sync: false # sync: false evita que o valor seja exposto desnecessariamente
-      - key: SHAREPOINT_CLIENT_SECRET
+      - key: CLIENT_ID_SUB
         sync: false
-      - key: SHAREPOINT_TENANT_ID
+      - key: CLIENT_SECRET_SUB
         sync: false
-      - key: SHAREPOINT_SITE_URL
+      - key: REDIS_URL
         sync: false
       # Adicione aqui outras variáveis do seu .env
