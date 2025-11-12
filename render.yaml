@@ -1,0 +1,104 @@
+services:services:
+
+  # 1. Redis Database (Free)  # 1. O Serviço de Redis
+
+  - type: redis  - type: redis
+
+    name: aneel-redis    name: redis-broker
+
+    plan: free    plan: free
+
+    ipAllowList: []    ipAllowList: [] # <<< CORREÇÃO 1: Adicionada a lista de permissões de IP
+
+    maxmemoryPolicy: allkeys-lru
+
+  # 2. O Serviço da API
+
+  # 2. API Web Service (Free)  - type: web
+
+  - type: web    name: aneel-api
+
+    name: aneel-api    runtime: docker
+
+    runtime: docker    plan: free
+
+    plan: free    healthCheckPath: /health
+
+    dockerfilePath: ./Dockerfile    envVars:
+
+    dockerCommand: ./start_api.sh      - key: PYTHON_VERSION
+
+    healthCheckPath: /        value: 3.10
+
+    envVars:      - key: REDIS_URL
+
+      - key: PYTHON_VERSION        fromService:
+
+        value: "3.10"          type: redis
+
+      - key: REDIS_URL          name: redis-broker
+
+        fromService:          property: connectionString # <<< CORREÇÃO 2: Propriedade ajustada para 'connectionString'
+
+          type: redis      - fromGroup: aneel-secrets
+
+          name: aneel-redis
+
+          property: connectionString  # 3. O Serviço do Worker
+
+      - fromGroup: aneel-secrets  - type: worker
+
+    name: aneel-worker
+
+  # 3. Worker como Web Service (Free) - com health check HTTP    runtime: docker
+
+  - type: web    plan: free
+
+    name: aneel-worker    envVars:
+
+    runtime: docker      - key: PYTHON_VERSION
+
+    plan: free        value: 3.10
+
+    dockerfilePath: ./Dockerfile      - key: REDIS_URL
+
+    dockerCommand: ./start_worker.sh        fromService:
+
+    healthCheckPath: /          type: redis
+
+    envVars:          name: redis-broker
+
+      - key: PYTHON_VERSION          property: connectionString # <<< CORREÇÃO 2: Propriedade ajustada para 'connectionString'
+
+        value: "3.10"      - fromGroup: aneel-secrets
+
+      - key: REDIS_URL
+
+        fromService:# Define grupos de variáveis de ambiente secretas para não colocá-las no código
+
+          type: redisenvVarGroups:
+
+          name: aneel-redis  - name: aneel-secrets
+
+          property: connectionString    envVars:
+
+      - fromGroup: aneel-secrets      - key: TENANT_ID
+
+        sync: false # sync: false evita que o valor seja exposto desnecessariamente
+
+# Grupo de variáveis secretas (você adicionará os valores no Render Dashboard)      - key: CLIENT_ID_SUB
+
+envVarGroups:        sync: false
+
+  - name: aneel-secrets      - key: CLIENT_SECRET_SUB
+
+    envVars:        sync: false
+
+      - key: TENANT_ID      - key: REDIS_URL
+
+        sync: false        sync: false
+
+      - key: CLIENT_ID_SUB      # Adicione aqui outras variáveis do seu .env
+        sync: false
+      - key: CLIENT_SECRET_SUB
+        sync: false
