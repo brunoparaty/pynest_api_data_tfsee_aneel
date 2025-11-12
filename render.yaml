@@ -9,6 +9,10 @@ services:
     name: aneel-api
     runtime: docker
     plan: free
+    repo: https://github.com/brunoparaty/pynest_api_data_tfsee_aneel.git
+    branch: main
+    autoDeploy: true
+    buildCommand: chmod +x render-build.sh && ./render-build.sh
     dockerfilePath: ./Dockerfile
     dockerCommand: ./start_api.sh
     healthCheckPath: /
@@ -26,6 +30,10 @@ services:
     name: aneel-worker
     runtime: docker
     plan: free
+    repo: https://github.com/brunoparaty/pynest_api_data_tfsee_aneel.git
+    branch: main
+    autoDeploy: true
+    buildCommand: chmod +x render-build.sh && ./render-build.sh
     dockerfilePath: ./Dockerfile
     dockerCommand: ./start_worker.sh
     healthCheckPath: /

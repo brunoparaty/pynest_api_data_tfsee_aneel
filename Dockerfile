@@ -3,15 +3,8 @@ FROM mcr.microsoft.com/playwright/python:v1.45.0-jammy
 
 # --- NOVA ETAPA ---
 # Instala o pacote 'iproute2', que contém o comando 'ip' exigido pela pynest-api
-# O apt-get update atualiza a lista de pacotes e o -y confirma a instalação.
+# O apt-get update atualiza a lista de pacentes e o -y confirma a instalação.
 RUN apt-get update && apt-get install -y iproute2 && rm -rf /var/lib/apt/lists/*
-
-# Instala o Git para permitir operações com submódulos.
-# Copia todos os arquivos do diretório de contexto para a imagem.
-# Inicializa e atualiza recursivamente os submódulos Git do projeto.
-RUN apt-get update && apt-get install -y git
-COPY . .
-RUN git submodule update --init --recursive
 
 # Define o diretório de trabalho
 WORKDIR /app
