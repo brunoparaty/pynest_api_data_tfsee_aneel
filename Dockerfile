@@ -26,6 +26,10 @@ COPY . .
 # Instala os navegadores do Playwright
 RUN python -m playwright install --with-deps chromium
 
+# Copia scripts de inicialização e dá permissão de execução
+COPY start_api.sh start_worker.sh ./
+RUN chmod +x start_api.sh start_worker.sh
+
 # --- NOVA ETAPA: Boas Práticas de Segurança ---
 # Cria um usuário não-root chamado 'appuser' para rodar a aplicação
 RUN useradd --create-home appuser

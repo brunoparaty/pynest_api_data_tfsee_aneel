@@ -1,0 +1,26 @@
+# Configuração Render - Serviço Worker
+# Deploy este arquivo DEPOIS da API e do Redis
+
+services:
+  # Serviço do Worker (Web Service rodando Celery)
+  - type: web
+    name: aneel-worker
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /
+    dockerfilePath: ./Dockerfile
+    dockerCommand: ./start_worker.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.10"
+      - key: PORT
+        value: "8000"
+      # IMPORTANTE: Copie a mesma REDIS_URL que você usou na API
+      - key: TENANT_ID
+        sync: false
+      - key: CLIENT_ID_SUB
+        sync: false
+      - key: CLIENT_SECRET_SUB
+        sync: false

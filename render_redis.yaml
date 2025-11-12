@@ -1,0 +1,10 @@
+# Configuração Render - Redis
+# Deploy este arquivo SEGUNDO (depois da API, antes do Worker)
+
+services:
+  # Serviço Redis (Database)
+  - type: redis
+    name: aneel-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []

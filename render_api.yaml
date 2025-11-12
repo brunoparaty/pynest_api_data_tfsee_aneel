@@ -1,0 +1,27 @@
+# Configuração Render - Serviço API
+# Deploy este arquivo primeiro: render.com → New Blueprint → Aponte para este arquivo
+
+services:
+  # Serviço da API (Web Service)
+  - type: web
+    name: aneel-api
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /
+    dockerfilePath: ./Dockerfile
+    dockerCommand: ./start_api.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.10"
+      - key: PORT
+        value: "8000"
+      # IMPORTANTE: Após criar o Redis, você vai copiar a URL interna dele
+      # e adicionar manualmente aqui como variável de ambiente REDIS_URL
+      - key: TENANT_ID
+        sync: false
+      - key: CLIENT_ID_SUB
+        sync: false
+      - key: CLIENT_SECRET_SUB
+        sync: false

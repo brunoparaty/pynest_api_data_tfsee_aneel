@@ -29,7 +29,25 @@ def executar_automacao_aneel(cnpj_busca: str):
     ano_mes_arquivo = hoje.strftime("%y") + mes_referencia_dt.strftime("%m")
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        # Configuração otimizada para economizar memória (512MB)
+        browser = p.chromium.launch(
+            headless=True,
+            args=[
+                '--disable-dev-shm-usage',      # Evita usar /dev/shm (importante!)
+                '--no-sandbox',                 # Remove sandbox
+                '--disable-setuid-sandbox',
+                '--disable-gpu',                # Desabilita GPU
+                '--disable-software-rasterizer',
+                '--disable-extensions',
+                '--disable-background-networking',
+                '--disable-default-apps',
+                '--disable-sync',
+                '--single-process',             # ⭐ Crucial para 512MB!
+                '--no-zygote',
+                '--disable-accelerated-2d-canvas',
+                '--memory-pressure-off'
+            ]
+        )
         context = browser.new_context(**p.devices['Desktop Chrome'])
         page = context.new_page()
 

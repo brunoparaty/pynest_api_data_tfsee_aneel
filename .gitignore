@@ -41,3 +41,7 @@ Thumbs.db
 
 # Variáveis de Ambiente
 .env
+
+# Arquivos temporários de deploy
+.deployignore
+*.log
